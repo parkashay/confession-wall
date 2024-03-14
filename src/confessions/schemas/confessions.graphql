@@ -4,14 +4,6 @@ type Error {
   message: String!
 }
 
-type Confession {
-  id: ID!
-  to: String!
-  title: String!
-  content: String!
-  likes: Int
-}
-
 input ConfessionInput {
   to: String!
   title: String!
@@ -24,8 +16,6 @@ input LikeInput {
 }
 
 type Query {
-  test: String
-  testWithVariable(name: String!): String
   getAllConfessions: [Confession]
 }
 

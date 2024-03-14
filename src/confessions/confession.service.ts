@@ -1,25 +1,38 @@
 import { Repository } from 'typeorm';
 import { Confession } from './entities/confession.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfessionInput, LikeInput, UnionResponse } from 'src/graphql';
+import { User } from 'src/auth/entities/user.entity';
+import { Request } from 'express';
 
 @Injectable()
 export class ConfessionService {
   constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(Confession)
     private confessionRepository: Repository<Confession>,
   ) {}
 
   // retrieve all the confessions
   async findAll(): Promise<Confession[]> {
-    return await this.confessionRepository.find();
+    return await this.confessionRepository.find({ relations: ['user'] });
   }
 
   // create a new confession
-  async create(confession: ConfessionInput): Promise<UnionResponse> {
+  async create(context: any, confession: ConfessionInput): Promise<any> {
     try {
-      return await this.confessionRepository.save(confession);
+      const user = await this.userRepository.findOne({
+        where: {
+          id: context.req.user.id,
+        },
+      });
+      if (!user) throw new UnauthorizedException();
+      return await this.confessionRepository.save({
+        ...confession,
+        user,
+      });
     } catch (err) {
       return {
         message:
@@ -30,7 +43,7 @@ export class ConfessionService {
   }
 
   // delete a confession
-  async delete(id: string): Promise<string> {
+  async delete(context: any, id: string): Promise<string> {
     const res = await this.confessionRepository.delete({ id });
     if (!res.affected)
       return 'The confession could not be found to be deleted !';

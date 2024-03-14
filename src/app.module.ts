@@ -6,10 +6,14 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfessionsModule } from './confessions/confessions.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     ConfessionsModule,
+    AuthModule,
+    UserModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -31,6 +35,7 @@ import { ConfessionsModule } from './confessions/confessions.module';
         path: 'src/graphql.ts',
         outputAs: 'interface',
       },
+      context: ({ req, res }) => ({ req, res }),
     }),
   ],
   controllers: [AppController],
