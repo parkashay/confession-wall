@@ -1,0 +1,22 @@
+union AuthResponse = User | Error
+
+input RegisterCredentialsInput {
+  fullname: String!
+  email: String!
+  password: String!
+}
+
+input LoginCredentialsInput {
+  email: String!
+  password: String!
+}
+
+type Query {
+  currentUser: AuthResponse!
+}
+
+type Mutation {
+  registerWithCredentials(input: RegisterCredentialsInput!): AuthResponse!
+  loginWithCredentials(input: LoginCredentialsInput!): AuthResponse!
+  loginWithGoogle(token: String!): AuthResponse!
+}

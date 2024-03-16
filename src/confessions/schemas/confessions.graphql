@@ -4,33 +4,17 @@ type Error {
   message: String!
 }
 
-type Confession {
-  id: ID!
-  to: String!
-  title: String!
-  content: String!
-  likes: Int
-}
-
 input ConfessionInput {
   to: String!
   title: String!
   content: String!
 }
 
-input LikeInput {
-  id: ID!
-  type: Int!
-}
-
 type Query {
-  test: String
-  testWithVariable(name: String!): String
   getAllConfessions: [Confession]
 }
 
 type Mutation {
   createConfession(confession: ConfessionInput!): UnionResponse!
   deleteConfession(id: ID!): String!
-  likeConfession(input: LikeInput!): UnionResponse!
 }

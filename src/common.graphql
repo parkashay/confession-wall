@@ -1,0 +1,14 @@
+type User {
+  id: String!
+  name: String!
+  email: String!
+  confessions: [Confession]
+}
+
+type Confession {
+  id: ID!
+  to: String!
+  title: String!
+  content: String!
+  user: User
+}

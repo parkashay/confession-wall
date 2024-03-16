@@ -1,0 +1,7 @@
+union ConfessionsByUser = ConfessionArray | Error
+type ConfessionArray {
+  confessions: [Confession]!
+}
+type Query {
+  getUserConfessions: ConfessionsByUser
+}

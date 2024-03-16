@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import { Column, Entity,  ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Confession {
@@ -14,6 +15,9 @@ export class Confession {
   @Column({ type: 'text' })
   content: string;
 
-  @Column({ default: 0 })
-  likes: number;
+  @ManyToOne(() => User, (user) => user.confessions, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  user: User;
 }

@@ -1,25 +1,37 @@
 import { Repository } from 'typeorm';
 import { Confession } from './entities/confession.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConfessionInput, LikeInput, UnionResponse } from 'src/graphql';
+import { ConfessionInput } from 'src/graphql';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ConfessionService {
   constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(Confession)
     private confessionRepository: Repository<Confession>,
   ) {}
 
   // retrieve all the confessions
   async findAll(): Promise<Confession[]> {
-    return await this.confessionRepository.find();
+    return await this.confessionRepository.find({ relations: ['user'] });
   }
 
   // create a new confession
-  async create(confession: ConfessionInput): Promise<UnionResponse> {
+  async create(context: any, confession: ConfessionInput): Promise<any> {
     try {
-      return await this.confessionRepository.save(confession);
+      const user = await this.userRepository.findOne({
+        where: {
+          id: context.req.user.id,
+        },
+      });
+      if (!user) throw new UnauthorizedException();
+      return await this.confessionRepository.save({
+        ...confession,
+        user,
+      });
     } catch (err) {
       return {
         message:
@@ -30,26 +42,21 @@ export class ConfessionService {
   }
 
   // delete a confession
-  async delete(id: string): Promise<string> {
-    const res = await this.confessionRepository.delete({ id });
-    if (!res.affected)
-      return 'The confession could not be found to be deleted !';
-    return 'The confession has been deleted !';
-  }
-
-  // like or dislike
-  async like(input: LikeInput): Promise<UnionResponse> {
-    const res = await this.confessionRepository.update(
-      { id: input.id },
-      { likes: () => `likes + ${input.type}` },
-    );
-    if (res.affected)
-      return this.confessionRepository.findOne({
-        where: {
-          id: input.id,
-        },
+  async delete(context: any, id: string): Promise<string> {
+    try {
+      const confession = await this.confessionRepository.findOne({
+        where: { id },
+        relations: { user: true },
       });
-
-    return { message: 'The confession could not be found !' };
+      if (!confession) throw new Error('Confession could not be found!');
+      if (context.req.user.id !== confession.user.id)
+        throw new Error('The confession does not belong to the current user!');
+      await this.confessionRepository.delete({ id });
+      return 'Confession deleted successfully!';
+    } catch (err) {
+      return (
+        'Confession could not be deleted. Reason: ' + (err as Error).message
+      );
+    }
   }
 }
