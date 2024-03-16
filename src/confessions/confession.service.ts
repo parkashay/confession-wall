@@ -2,9 +2,8 @@ import { Repository } from 'typeorm';
 import { Confession } from './entities/confession.entity';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConfessionInput, LikeInput, UnionResponse } from 'src/graphql';
+import { ConfessionInput } from 'src/graphql';
 import { User } from 'src/auth/entities/user.entity';
-import { Request } from 'express';
 
 @Injectable()
 export class ConfessionService {
@@ -44,25 +43,20 @@ export class ConfessionService {
 
   // delete a confession
   async delete(context: any, id: string): Promise<string> {
-    const res = await this.confessionRepository.delete({ id });
-    if (!res.affected)
-      return 'The confession could not be found to be deleted !';
-    return 'The confession has been deleted !';
-  }
-
-  // like or dislike
-  async like(input: LikeInput): Promise<UnionResponse> {
-    const res = await this.confessionRepository.update(
-      { id: input.id },
-      { likes: () => `likes + ${input.type}` },
-    );
-    if (res.affected)
-      return this.confessionRepository.findOne({
-        where: {
-          id: input.id,
-        },
+    try {
+      const confession = await this.confessionRepository.findOne({
+        where: { id },
+        relations: { user: true },
       });
-
-    return { message: 'The confession could not be found !' };
+      if (!confession) throw new Error('Confession could not be found!');
+      if (context.req.user.id !== confession.user.id)
+        throw new Error('The confession does not belong to the current user!');
+      await this.confessionRepository.delete({ id });
+      return 'Confession deleted successfully!';
+    } catch (err) {
+      return (
+        'Confession could not be deleted. Reason: ' + (err as Error).message
+      );
+    }
   }
 }

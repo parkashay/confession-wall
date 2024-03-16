@@ -10,6 +10,5 @@ type Confession {
   to: String!
   title: String!
   content: String!
-  likes: Int
   user: User
 }

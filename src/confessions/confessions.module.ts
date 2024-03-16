@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-import {
-  ConfessionsResolver,
-} from './confessions.resolver';
+import { ConfessionsResolver } from './confessions.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Confession } from './entities/confession.entity';
 import { ConfessionService } from './confession.service';

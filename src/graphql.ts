@@ -25,11 +25,6 @@ export interface ConfessionInput {
     content: string;
 }
 
-export interface LikeInput {
-    id: string;
-    type: number;
-}
-
 export interface IQuery {
     currentUser(): AuthResponse | Promise<AuthResponse>;
     getAllConfessions(): Nullable<Nullable<Confession>[]> | Promise<Nullable<Nullable<Confession>[]>>;
@@ -42,7 +37,6 @@ export interface IMutation {
     loginWithGoogle(token: string): AuthResponse | Promise<AuthResponse>;
     createConfession(confession: ConfessionInput): UnionResponse | Promise<UnionResponse>;
     deleteConfession(id: string): string | Promise<string>;
-    likeConfession(input: LikeInput): UnionResponse | Promise<UnionResponse>;
 }
 
 export interface User {
@@ -57,7 +51,6 @@ export interface Confession {
     to: string;
     title: string;
     content: string;
-    likes?: Nullable<number>;
     user?: Nullable<User>;
 }
 

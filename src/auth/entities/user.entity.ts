@@ -1,5 +1,5 @@
 import { Confession } from 'src/confessions/entities/confession.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity,OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -17,4 +17,5 @@ export class User {
 
   @OneToMany(() => Confession, (confession) => confession.user)
   confessions: Confession[];
+
 }

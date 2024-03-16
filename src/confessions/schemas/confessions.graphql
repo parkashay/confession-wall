@@ -10,11 +10,6 @@ input ConfessionInput {
   content: String!
 }
 
-input LikeInput {
-  id: ID!
-  type: Int!
-}
-
 type Query {
   getAllConfessions: [Confession]
 }
@@ -22,5 +17,4 @@ type Query {
 type Mutation {
   createConfession(confession: ConfessionInput!): UnionResponse!
   deleteConfession(id: ID!): String!
-  likeConfession(input: LikeInput!): UnionResponse!
 }

@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Confession } from 'src/confessions/entities/confession.entity';
 import {
-  Confession as ConfessionType,
   ConfessionsByUser,
   Error,
-  UnionResponse,
 } from 'src/graphql';
 import { Repository } from 'typeorm';
 
