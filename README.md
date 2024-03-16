@@ -28,13 +28,9 @@ A simple web server built with NestJS, leveraging GraphQL for API interactions a
         Rename .env.example file to .env.
         Update .env file with your database.
 
-    Start the application:
+    - Start the application:
+        npm start or npm run dev for development
 
-bash
-
-npm start
-
-Usage
-
-    Access the GraphQL playground at http://localhost:3000/graphql to interact with the API.
-    To perform operations requiring authentication, provide the JWT token as a Bearer token via the Authorization header.
+### Usage
+    - Access the GraphQL playground at http://localhost:3001/graphql to interact with the API.
+    - To perform operations requiring authentication, provide the JWT token as a Bearer token via the Authorization header.
